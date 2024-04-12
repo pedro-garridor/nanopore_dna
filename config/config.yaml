@@ -1,0 +1,3 @@
+input: '../input'
+outdir: 'results'
+genome_dir: '../hg38'
