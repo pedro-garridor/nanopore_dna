@@ -6,6 +6,7 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 rule hapdiff:
     input:
         genome=config['genome_dir']+'/hg38.fa',
+        vntr=config['vntr_bed'],
         hap=config['outdir']+'/HapDup/{sample}'
     output:
         temp(directory(config['outdir']+'/HapDiff/{sample}'))
@@ -19,6 +20,7 @@ rule hapdiff:
             --reference {input.genome} \
             --pat {input.hap}/hapdup_dual_1.fasta \
             --mat {input.hap}/hapdup_dual_2.fasta \
+            --tandem-repeats {input.vntr} \
             --out-dir {output} \
             -t {workflow.cores}
         '''

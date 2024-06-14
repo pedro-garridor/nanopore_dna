@@ -1,5 +1,5 @@
 '''
-Nanopore RDA-Seq workflow
+Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
@@ -7,6 +7,7 @@ include: 'rules/diploid.smk'
 include: 'rules/hapdiff.smk'
 include: 'rules/marginphase.smk'
 include: 'rules/pepper.smk'
+include: 'rules/vntrs_hg38.smk'
 
 SAMPLES = glob_wildcards(config['input']+'/uBAM/{sample}.bam').sample
 

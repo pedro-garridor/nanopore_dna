@@ -16,7 +16,7 @@ rule combine_vcfs:
         bcftools concat \
             -a \
             {input.snvs}/{sample}_PMDV_FINAL.phased.vcf.gz \
-            {input.svs}/hapdiff_unphased.vcf.gz -o {output}
+            {input.svs}/hapdiff_phased.vcf.gz -o {output}
         '''
 
 rule marginphase:
@@ -50,7 +50,7 @@ rule final_vcf:
     output:
         config['outdir']+'/VCF/{sample}.vcf.gz'
     conda:
-        '../envs/tabix.yml'
+        '../envs/bcftools.yml'
     shell:
         'bgzip {input}'
 
@@ -60,6 +60,6 @@ rule final_vcf_idx:
     output:
         config['outdir']+'/VCF/{sample}.vcf.gz.tbi'
     conda:
-        '../envs/tabix.yml'
+        '../envs/bcftools.yml'
     shell:
         'tabix {input}'

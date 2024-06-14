@@ -4,7 +4,6 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
 rule shasta:
-    # TODO
     input:
         config['outdir']+'/FASTQ/{sample}.fq'
     output:

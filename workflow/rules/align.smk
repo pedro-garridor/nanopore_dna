@@ -5,7 +5,7 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 
 rule fastq:
     input:
-        config['input']+'/{sample}.bam'
+        config['input_dir']+'/{sample}.bam'
     output:
         temp(config['outdir']+'/FASTQ/{sample}.fq')
     conda: '../envs/samtools.yml'

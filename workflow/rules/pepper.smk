@@ -9,7 +9,16 @@ rule pepper:
         bai=config['outdir']+'/BAM/{sample}.bam.bai',
         genome=config['genome_dir']+'/hg38.fa'
     output:
-        temp(directory(config['outdir']+'/PMDV/{sample}'))
+        intermediate_files=temp(directory(config['outdir']+'/PMDV/{sample}/intermediate_files')),
+        logs=protected(directory(config['outdir']+'/PMDV/{sample}/logs')),
+        chunks=temp(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.chunks.csv'),
+        hap_bam=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam'),
+        vcf=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz'),
+        tbi=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz.tbi'),
+        pahset_bed=protected(config['outdir']+'PMDV/{sample}/{sample}_PMDV_FINAL.phaseset.bed'),
+        vcf_unphased=temp(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.vcf.gz'),
+        tbi_unphased=temp(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.vcf.gz.tbi'),
+        report=protected(config['ourdir']+'/PMVD/{sample}/{sample}_PMDV_FINAL.visual_report.html')
     resources:
         nvidia_gpu=1
     threads:
