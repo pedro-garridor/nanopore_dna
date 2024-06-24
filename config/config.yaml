@@ -1,4 +1,4 @@
 input_dir: '../input'
 outdir: 'results'
 genome_dir: '../hg38'
-vntr_bed: 'vntrs_hg38.bed'
+vntr_bed: 'human_GRCh38_no_alt_analysis_set.trf.bed'
