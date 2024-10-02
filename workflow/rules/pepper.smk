@@ -3,11 +3,13 @@ Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
+configfile: "config/config.yaml"
+
 rule pepper:
     input:
         bam=config['outdir']+'/BAM/{sample}.bam',
         bai=config['outdir']+'/BAM/{sample}.bam.bai',
-        genome=config['genome_dir']+'/hg38.fa'
+        genome=config['genome_fa']
     output:
         intermediate_files=temp(directory(config['outdir']+'/PMDV/{sample}/intermediate_files')),
         logs=protected(directory(config['outdir']+'/PMDV/{sample}/logs')),
@@ -15,10 +17,12 @@ rule pepper:
         hap_bam=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam'),
         vcf=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz'),
         tbi=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz.tbi'),
-        pahset_bed=protected(config['outdir']+'PMDV/{sample}/{sample}_PMDV_FINAL.phaseset.bed'),
+        pahset_bed=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phaseset.bed'),
         vcf_unphased=temp(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.vcf.gz'),
         tbi_unphased=temp(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.vcf.gz.tbi'),
-        report=protected(config['ourdir']+'/PMVD/{sample}/{sample}_PMDV_FINAL.visual_report.html')
+        report=protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.visual_report.html')
+    params:
+        outdir = config['outdir']
     resources:
         nvidia_gpu=1
     threads:
@@ -31,7 +35,7 @@ rule pepper:
             call_variant \
             -b {input.bam} \
             -f {input.genome} \
-            -o {output} \
+            -o {params.outdir}/PMDV/{wildcards.sample} \
             -t {threads} \
             -s {wildcards.sample} \
             --ont_r10_q20 \
@@ -39,3 +43,12 @@ rule pepper:
             -p {wildcards.sample}_PMDV_FINAL
         '''
 
+rule pepper_samtools_index:
+    input:
+        config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
+    output:
+        protected(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam.bai')
+    conda:
+        '../envs/samtools.yml'
+    shell:
+        'samtools index {input}'

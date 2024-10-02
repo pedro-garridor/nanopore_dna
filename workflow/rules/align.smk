@@ -3,28 +3,30 @@ Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
+configfile: "config/config.yaml"
+
 rule fastq:
     input:
-        config['input_dir']+'/{sample}.bam'
+        config['input']+'/{sample}.bam'
     output:
         temp(config['outdir']+'/FASTQ/{sample}.fq')
     conda: '../envs/samtools.yml'
     shell:
         '''
         samtools fastq \
-            -T* \
+            -T "*" \
             {input} > {output}
         '''
 # -TMm,Ml,MM,ML
 
 rule minimap2:
     input:
-        genome=config['genome_dir']+'/hg38.fa',
+        genome=config['genome_fa'],
         fq=config['outdir']+'/FASTQ/{sample}.fq'
     output:
         temp(config['outdir']+'/BAM/{sample}.sam')
     threads:
-        workflow.cores/2
+        workflow.cores/4
     conda:
         '../envs/minimap2.yml'
     shell:
@@ -43,12 +45,10 @@ rule samtools_sort:
         config['outdir']+'/BAM/{sample}.sam'
     output:
         protected(config['outdir']+'/BAM/{sample}.bam')
-    threads:
-        workflow.cores/4
     conda:
         '../envs/samtools.yml'
     shell:
-        'samtools sort {input} -@ {threads} -o {output}'
+        'samtools sort {input} -o {output}'
 
 rule samtools_index:
     input:

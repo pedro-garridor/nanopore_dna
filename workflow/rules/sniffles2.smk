@@ -1,23 +1,27 @@
+'''
+Nanopore DNA-Seq workflow
+Copyright (C) 2024, Pedro Garrido Rodríguez
+'''
+
+configfile: "config/config.yaml"
+
 rule sniffles2:
     input:
         hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
-        reference=config['genome_dir'],
+        reference=config['genome_fa'],
         vntr=config['vntr_bed']
     output:
         vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
-    threads:
-        workflow.cores/4
     conda:
-        '.../envs/sniffles2.yml'
+        '../envs/sniffles2.yml'
     shell:
         '''
         sniffles \
             --input {input.hap_bam} \
             --vcf {output} \
-            --reference {inut.reference} \
-            --tandem-repeasts {input.vntr} \
-            --phase \
-            -t {threads}
+            --reference {input.reference} \
+            --tandem-repeats {input.vntr} \
+            --phase
         '''
 
 rule sniffles2_gzip:

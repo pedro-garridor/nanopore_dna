@@ -3,6 +3,8 @@ Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
+configfile: "config/config.yaml"
+
 rule shasta:
     input:
         config['outdir']+'/FASTQ/{sample}.fq'
@@ -13,10 +15,10 @@ rule shasta:
     threads:
         workflow.cores/4
     conda:
-        './envs/shasta.yml'
+        '../envs/shasta.yml'
     shell:
         '''
-        shasta assemble\
+        shasta \
             --input {input} \
             --assemblyDirectory {output} \
             --config {params.config} \
@@ -28,7 +30,7 @@ rule minimap2_diploid:
         diploid_ref=config['outdir']+'/SHASTA/{sample}',
         fq=config['outdir']+'/FASTQ/{sample}.fq'
     output:
-        temp(config['outdir']+'/HapDup/{sample}/{sample}.sam')
+        temp(config['outdir']+'/diploid/{sample}/{sample}.sam')
     threads:
         workflow.cores/2
     conda:
@@ -47,9 +49,9 @@ rule minimap2_diploid:
 
 rule samtools_sort_diploid:
     input:
-        config['outdir']+'/HapDup/{sample}/{sample}.sam'
+        config['outdir']+'/diploid/{sample}/{sample}.sam'
     output:
-        temp(config['outdir']+'/HapDup/{sample}/{sample}.bam')
+        temp(config['outdir']+'/diploid/{sample}/{sample}.bam')
     conda:
         '../envs/samtools.yml'
     shell:  
@@ -57,9 +59,9 @@ rule samtools_sort_diploid:
 
 rule samtools_index_diploid:
     input: 
-        config['outdir']+'/HapDup/{sample}/{sample}.bam'
+        config['outdir']+'/diploid/{sample}/{sample}.bam'
     output:
-        temp(config['outdir']+'/HapDup/{sample}/{sample}.bam.bai')
+        temp(config['outdir']+'/diploid/{sample}/{sample}.bam.bai')
     conda:
         '../envs/samtools.yml'
     shell:  
@@ -68,19 +70,20 @@ rule samtools_index_diploid:
 rule hapdup:
     input:
         diploid_ref=config['outdir']+'/SHASTA/{sample}',
-        bam=config['outdir']+'/HapDup/{sample}/{sample}.bam'
-        bai=config['outdir']+'/HapDup/{sample}/{sample}.bam.bai'
+        bam=config['outdir']+'/diploid/{sample}/{sample}.bam',
+        bai=config['outdir']+'/diploid/{sample}/{sample}.bam.bai'
     output:
         temp(directory(config['outdir']+'/HapDup/{sample}'))
     threads:
         workflow.cores/4
     singularity:
-        'docker://mkolmogo/hapdup'
+        'docker://mkolmogo/hapdup:0.12'
     shell:
         '''
         hapdup \
             --assembly {input.diploid_ref}/Assembly.fasta \
             --bam {input.bam} \
             --out-dir {output} \
+            --rtype ont \
             -t {threads}
         '''

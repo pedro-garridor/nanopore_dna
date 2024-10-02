@@ -3,9 +3,11 @@ Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
+configfile: "config/config.yaml"
+
 rule hapdiff:
     input:
-        genome=config['genome_dir']+'/hg38.fa',
+        genome=config['genome_fa'],
         vntr=config['vntr_bed'],
         hap=config['outdir']+'/HapDup/{sample}'
     output:
@@ -13,7 +15,7 @@ rule hapdiff:
     threads:
         workflow.cores/4
     singularity:
-        'docker://mkolmogo/hapdiff'
+        'docker://mkolmogo/hapdiff:0.9'
     shell:
         '''
         hapdiff.py \

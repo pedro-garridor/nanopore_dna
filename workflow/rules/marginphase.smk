@@ -3,9 +3,11 @@ Nanopore DNA-Seq workflow
 Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
+configfile: "config/config.yaml"
+
 rule combine_vcfs:
     input:
-        snvs=config['outdir']+'/PMDV/{sample}',
+        snvs=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz',
         svs=config['outdir']+'/HapDiff/{sample}'
     output:
         temp(config['outdir']+'/marginPhase/{sample}.vcf')
@@ -15,7 +17,7 @@ rule combine_vcfs:
         '''
         bcftools concat \
             -a \
-            {input.snvs}/{sample}_PMDV_FINAL.phased.vcf.gz \
+            {input.snvs} \
             {input.svs}/hapdiff_phased.vcf.gz -o {output}
         '''
 
@@ -23,8 +25,8 @@ rule marginphase:
     input:
         bam=config['outdir']+'/BAM/{sample}.bam',
         bai=config['outdir']+'/BAM/{sample}.bam.bai',
-        genome=config['genome_dir']+'/hg38.fa',
-        vcf=config['outdir']+'/marginPhase/{sample}.vcf'
+        genome=config['genome_fa'],
+        vcf=config['outdir']+'/marginPhase/{sample}.vcf',
         config='resources/allParams.phase_vcf.ont.sv.json'
     output:
         temp(directory(config['outdir']+'/marginPhase/{sample}'))

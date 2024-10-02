@@ -1,17 +1,22 @@
+'''
+Nanopore DNA-Seq workflow
+Copyright (C) 2024, Pedro Garrido Rodríguez
+'''
+
+configfile: "config/config.yaml"
+
 rule modkit:
     input:
         hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
-        reference=config['genome_dir']
+        hap_bai=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam.bai',
+        reference=config['genome_fa']
     output:
         bed_methyl=protected(config['outdir']+'/modkit/{sample}.bed')
-    threads:
-        workflow.cores/2
     conda:
         '../envs/modkit.yml'
     shell:
         '''
         modkit pileup {input.hap_bam} {output} \
             --cpg \
-            --ref {input.reference} \
-            -t {threads}
+            --ref {input.reference}
         '''
