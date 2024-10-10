@@ -1,4 +1,4 @@
 .snakemake
 .keras
 .parallel
-resources/human_GRCh38_no_alt_analysis_set.trf.bed
+human_GRCh38_no_alt_analysis_set.trf.bed

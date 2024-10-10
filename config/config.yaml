@@ -1,4 +1,4 @@
 input: '../input'
 outdir: 'results'
 genome_fa: '../hg38/hg38.fa'
-vntr_bed: 'resources/human_GRCh38_no_alt_analysis_set.trf.bed'
+vntr_bed: 'human_GRCh38_no_alt_analysis_set.trf.bed'

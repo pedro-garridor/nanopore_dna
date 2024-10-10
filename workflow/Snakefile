@@ -4,8 +4,8 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 '''
 
 include: 'rules/align.smk'
-include: 'rules/diploid.smk'
-include: 'rules/hapdiff.smk'
+# include: 'rules/diploid.smk'
+# include: 'rules/hapdiff.smk'
 include: 'rules/marginphase.smk'
 include: 'rules/modkit.smk'
 include: 'rules/pepper.smk'
