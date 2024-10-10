@@ -30,7 +30,7 @@ rule sniffles2_gzip:
     output:
         vcf_zipped=protected(config['outdir']+'/sniffles2/{sample}.vcf.gz')
     conda:
-        '../envs/bcftools.yml'
+        '../envs/samtools.yml'
     shell:
         '''
         bgzip {input}
@@ -42,7 +42,7 @@ rule sniffles2_tbi:
     output:
         tbi=protected(config['outdir']+'/sniffles2/{sample}.vcf.gz.tbi')
     conda:
-        '../envs/bcftools.yml'
+        '../envs/samtools.yml'
     shell:
         '''
         tabix {input}

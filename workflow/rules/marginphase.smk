@@ -8,17 +8,18 @@ configfile: "config/config.yaml"
 rule combine_vcfs:
     input:
         snvs=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz',
-        svs=config['outdir']+'/HapDiff/{sample}'
+        svs=config['outdir']+'/sniffles2/{sample}.vcf.gz',# config['outdir']+'/HapDiff/{sample}'
     output:
         temp(config['outdir']+'/marginPhase/{sample}.vcf')
     conda:
-        '../envs/bcftools.yml'
+        '../envs/samtools.yml'
     shell:
         '''
         bcftools concat \
             -a \
             {input.snvs} \
-            {input.svs}/hapdiff_phased.vcf.gz -o {output}
+            {input.svs} \
+            -o {output}
         '''
 
 rule marginphase:
@@ -52,7 +53,7 @@ rule final_vcf:
     output:
         config['outdir']+'/VCF/{sample}.vcf.gz'
     conda:
-        '../envs/bcftools.yml'
+        '../envs/samtools.yml'
     shell:
         'bgzip {input}'
 
@@ -62,6 +63,6 @@ rule final_vcf_idx:
     output:
         config['outdir']+'/VCF/{sample}.vcf.gz.tbi'
     conda:
-        '../envs/bcftools.yml'
+        '../envs/samtools.yml'
     shell:
         'tabix {input}'

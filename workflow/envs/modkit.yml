@@ -1,12 +1,13 @@
 name: modkit
 channels:
-  - bioconda
-  - conda-forge
+- bioconda
+- conda-forge
 dependencies:
-  - _libgcc_mutex=0.1=conda_forge
-  - _openmp_mutex=4.5=2_gnu
-  - libgcc-ng=13.2.0=hc881cc4_6
-  - libgomp=13.2.0=hc881cc4_6
-  - libstdcxx-ng=13.2.0=h95c4c6d_6
-  - libzlib=1.2.13=hd590300_5
-  - ont-modkit=0.2.7=hdcf5f25_0
+- _libgcc_mutex=0.1=conda_forge
+- _openmp_mutex=4.5=2_gnu
+- libgcc=14.1.0=h77fa898_1
+- libgomp=14.1.0=h77fa898_1
+- libstdcxx=14.1.0=hc0a3c3a_1
+- libzlib=1.3.1=hb9d3cd8_2
+- ont-modkit=0.4.1=h5c23e0d_0
+
