@@ -5,10 +5,11 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 
 configfile: "config/config.yaml"
 
-rule sniffles2:
+if config['hg38'] == 'Yes' | config['is_hg38'] == 'yes':
+    rule sniffles2:
     input:
         hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
-        reference=config['genome_fa'],
+        reference=config['ref'],
         vntr=config['vntr_bed']
     output:
         vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
@@ -23,6 +24,24 @@ rule sniffles2:
             --tandem-repeats {input.vntr} \
             --phase
         '''
+else:
+    rule sniffles2:
+    input:
+        hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
+        reference=config['ref']
+    output:
+        vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
+    conda:
+        '../envs/sniffles2.yml'
+    shell:
+        '''
+        sniffles \
+            --input {input.hap_bam} \
+            --vcf {output} \
+            --reference {input.reference} \
+            --phase
+        '''
+
 
 rule sniffles2_gzip:
     input:

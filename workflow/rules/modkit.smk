@@ -9,7 +9,7 @@ rule modkit:
     input:
         hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
         hap_bai=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam.bai',
-        reference=config['genome_fa']
+        reference=config['ref']
     output:
         bed_methyl=protected(config['outdir']+'/modkit/{sample}.bed')
     conda:

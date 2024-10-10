@@ -21,7 +21,7 @@ rule fastq:
 
 rule minimap2:
     input:
-        genome=config['genome_fa'],
+        genome=config['ref'],
         fq=config['outdir']+'/FASTQ/{sample}.fq'
     output:
         temp(config['outdir']+'/BAM/{sample}.sam')

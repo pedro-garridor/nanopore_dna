@@ -1,4 +1,5 @@
 input: '../input'
 outdir: 'results'
-genome_fa: '../hg38/hg38.fa'
+ref: '../hg38/hg38.fa'
+hg38: 'no'
 vntr_bed: 'human_GRCh38_no_alt_analysis_set.trf.bed'

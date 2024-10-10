@@ -8,17 +8,18 @@ From: debian:11
     mkdir /root/.conda
     bash Miniforge3-Linux-x86_64.sh -b -p /opt/miniforge3
     rm Miniforge3-Linux-x86_64.sh
-    wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip
-    unzip -u snpEff_latest_core.zip
-    rm snpEff_latest_core.zip
-    cd 
-    java -jar opt/snpEff/snpEff.jar download GRCh38.99
 
 %environment
     PATH=$PATH:/opt/miniforge3/bin
 
 %files
-    ./ /opt/nanopore_dna/
+    ./config /opt/nanopore_dna/
+    ./resources /opt/nanopore_dna/
+    ./workflow /opt/nanopore_dna/
+    ./.gitattributes /opt/nanopore_dna/
+    ./.gitignore /opt/nanopore_dna/
+    ./LICENSE.md /opt/nanopore_dna/
+    ./README.md /opt/nanopore_dna/
 
 %runscript
     VERSION='0.0.1+20241008'
@@ -36,17 +37,12 @@ From: debian:11
 
     if [ "$#" -eq 0 ]; then
         echo "No arguments supplied."
-        echo "Use bash intONT.sh -h to get help."
+        echo "Use 'singularity run-help nanopore_dna.def' to get help."
         exit 2
     fi
 
     while [ $# -gt 0 ]; do
         case $1 in 
-            -d|--dbsnp)
-                DBSNP="$2"
-                shift
-                shift
-                ;;
             -i|--input)
                 INPUT="$2"
                 shift
@@ -59,6 +55,11 @@ From: debian:11
                 ;;
             -r|--reference)
                 REF="$2"
+                shift
+                shift
+                ;;
+            -g|--hg38)
+                HG38="$2"
                 shift
                 shift
                 ;;
@@ -88,7 +89,7 @@ From: debian:11
 
     if [ -z $DBSNP ] || [ -z $PARENT_DIR ] || [ -z $OUT_DIR ] || [ -z $REF ]; then
         echo "Arguments -d, -i, -o and -r are required."
-        echo "Use bash intONT.sh -h to get help."
+        echo "Use 'singularity run-help nanopore_dna.def' to get help."
         exit 2
     fi
 
@@ -97,15 +98,15 @@ From: debian:11
             --config \
             input=$INPUT \
             outdir=$OUTDIR \
-            ref=$REF \
-            dbSNP=$DBSNP
+            ref=$REF
     else
-        snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+        snakemake -s /opt/nanopore_dna/workflow/Snakefile \
+            -kj $THREADS \
             --config \
             input=$INPUT \
             outdir=$OUTDIR \
             ref=$REF \
-            dbSNP=$DBSNP
+            hg38=$HG38
     fi
 
 %labels
@@ -124,17 +125,15 @@ From: debian:11
     Version 0.0.1+20241008
 
 
-    Usage: bash intONT.sh [arguments]
-
-    -h, --help                                  show this help message
+    Usage: singularity run nanopore_dna.def [arguments]
 
     Required:
-        -d, --dbsnp FILE                        dbSNP VCF file
         -i, --input FILE                        raw data folder
         -o, --output FILE                       output folder
-        -r , reference FILE                     reference genome (GRCh38 only)
+        -r , reference FILE                     reference genome
     
     Optional arguments:
+        -g, --hg38 [no]                         reference is hg38? [yes|no]
         -t [1]                                  threads
         -n                                      perform a dry run
     

@@ -9,7 +9,7 @@ rule pepper:
     input:
         bam=config['outdir']+'/BAM/{sample}.bam',
         bai=config['outdir']+'/BAM/{sample}.bam.bai',
-        genome=config['genome_fa']
+        genome=config['ref']
     output:
         intermediate_files=temp(directory(config['outdir']+'/PMDV/{sample}/intermediate_files')),
         logs=protected(directory(config['outdir']+'/PMDV/{sample}/logs')),

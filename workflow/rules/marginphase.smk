@@ -26,7 +26,7 @@ rule marginphase:
     input:
         bam=config['outdir']+'/BAM/{sample}.bam',
         bai=config['outdir']+'/BAM/{sample}.bam.bai',
-        genome=config['genome_fa'],
+        genome=config['ref'],
         vcf=config['outdir']+'/marginPhase/{sample}.vcf',
         config='resources/allParams.phase_vcf.ont.sv.json'
     output:
