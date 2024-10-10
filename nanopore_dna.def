@@ -88,7 +88,7 @@ From: debian:11
     done
 
     if [ -z $DBSNP ] || [ -z $PARENT_DIR ] || [ -z $OUT_DIR ] || [ -z $REF ]; then
-        echo "Arguments -d, -i, -o and -r are required."
+        echo "Arguments -i, -o and -r are required."
         echo "Use 'singularity run-help nanopore_dna.def' to get help."
         exit 2
     fi
