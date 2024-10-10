@@ -1,0 +1,140 @@
+Bootstrap: library
+From: debian:11
+
+%post
+    apt update && apt install -y bcftools minimap2 openjdk-17-jre python3 samtools snakemake tabix unzip wget
+    cd /opt
+    wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+    mkdir /root/.conda
+    bash Miniforge3-Linux-x86_64.sh -b -p /opt/miniforge3
+    rm Miniforge3-Linux-x86_64.sh
+    wget https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip
+    unzip -u snpEff_latest_core.zip
+    rm snpEff_latest_core.zip
+    cd 
+    java -jar opt/snpEff/snpEff.jar download GRCh38.99
+
+%environment
+    PATH=$PATH:/opt/miniforge3/bin
+
+%files
+    ./ /opt/nanopore_dna/
+
+%runscript
+    VERSION='0.0.1+20241008'
+
+    echo ''
+    echo 'nanopore_dna: DNA-Seq nanopore pipeline'
+    echo 'Copyright (C) 2024, Pedro Garrido Rodríguez'
+    echo ''
+    echo 'This program is distributed in the hope that it will be useful,'
+    echo 'but WITHOUT ANY WARRANTY; without even the implied warranty of'
+    echo 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.'
+    echo ''
+    echo "Version $VERSION"
+    echo ''
+
+    if [ "$#" -eq 0 ]; then
+        echo "No arguments supplied."
+        echo "Use bash intONT.sh -h to get help."
+        exit 2
+    fi
+
+    while [ $# -gt 0 ]; do
+        case $1 in 
+            -d|--dbsnp)
+                DBSNP="$2"
+                shift
+                shift
+                ;;
+            -i|--input)
+                INPUT="$2"
+                shift
+                shift
+                ;;
+            -o|--output)
+                OUTDIR="$2"
+                shift
+                shift
+                ;;
+            -r|--reference)
+                REF="$2"
+                shift
+                shift
+                ;;
+            -n|--dryrun)
+                DRYRUN=1
+                shift
+                ;;
+            -t|--threads)
+                THREADS="$2"
+                shift
+                shift
+                ;;
+            -v|--version)
+                exit
+                shift
+                ;;
+            -*|--*)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+            *)
+                echo "Unknown argument $1"
+                exit 1
+                ;;
+        esac
+    done
+
+    if [ -z $DBSNP ] || [ -z $PARENT_DIR ] || [ -z $OUT_DIR ] || [ -z $REF ]; then
+        echo "Arguments -d, -i, -o and -r are required."
+        echo "Use bash intONT.sh -h to get help."
+        exit 2
+    fi
+
+    if [ $DRYRUN ]; then
+        snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+            --config \
+            input=$INPUT \
+            outdir=$OUTDIR \
+            ref=$REF \
+            dbSNP=$DBSNP
+    else
+        snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+            --config \
+            input=$INPUT \
+            outdir=$OUTDIR \
+            ref=$REF \
+            dbSNP=$DBSNP
+    fi
+
+%labels
+    Author: Pedro Garrido Rodríguez
+    Contact: pedro (dot) garridor (at) outlook (dot) es
+    Version: 0.0.1+20241008
+
+%help
+
+    nanopore_dna: DNA-Seq nanopore pipeline
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Version 0.0.1+20241008
+
+
+    Usage: bash intONT.sh [arguments]
+
+    -h, --help                                  show this help message
+
+    Required:
+        -d, --dbsnp FILE                        dbSNP VCF file
+        -i, --input FILE                        raw data folder
+        -o, --output FILE                       output folder
+        -r , reference FILE                     reference genome (GRCh38 only)
+    
+    Optional arguments:
+        -t [1]                                  threads
+        -n                                      perform a dry run
+    
