@@ -5,42 +5,42 @@ Copyright (C) 2024, Pedro Garrido Rodríguez
 
 configfile: "config/config.yaml"
 
-if config['hg38'] == 'Yes' | config['is_hg38'] == 'yes':
+if config['hg38'] == 'Yes' or config['hg38'] == 'yes':
     rule sniffles2:
-    input:
-        hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
-        reference=config['ref'],
-        vntr=config['vntr_bed']
-    output:
-        vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
-    conda:
-        '../envs/sniffles2.yml'
-    shell:
-        '''
-        sniffles \
-            --input {input.hap_bam} \
-            --vcf {output} \
-            --reference {input.reference} \
-            --tandem-repeats {input.vntr} \
-            --phase
-        '''
+        input:
+            hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
+            reference=config['ref'],
+            vntr=config['vntr_bed']
+        output:
+            vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
+        conda:
+            '../envs/sniffles2.yml'
+        shell:
+            '''
+            sniffles \
+                --input {input.hap_bam} \
+                --vcf {output} \
+                --reference {input.reference} \
+                --tandem-repeats {input.vntr} \
+                --phase
+            '''
 else:
     rule sniffles2:
-    input:
-        hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
-        reference=config['ref']
-    output:
-        vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
-    conda:
-        '../envs/sniffles2.yml'
-    shell:
-        '''
-        sniffles \
-            --input {input.hap_bam} \
-            --vcf {output} \
-            --reference {input.reference} \
-            --phase
-        '''
+        input:
+            hap_bam=config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.haplotagged.bam',
+            reference=config['ref']
+        output:
+            vcf=temp(config['outdir']+'/sniffles2/{sample}.vcf')
+        conda:
+            '../envs/sniffles2.yml'
+        shell:
+            '''
+            sniffles \
+                --input {input.hap_bam} \
+                --vcf {output} \
+                --reference {input.reference} \
+                --phase
+            '''
 
 
 rule sniffles2_gzip:
