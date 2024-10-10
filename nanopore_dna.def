@@ -95,10 +95,12 @@ From: debian:11
 
     if [ $DRYRUN ]; then
         snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+            -kj $THREADS \
             --config \
             input=$INPUT \
             outdir=$OUTDIR \
-            ref=$REF
+            ref=$REF \
+            hg38=$HG38
     else
         snakemake -s /opt/nanopore_dna/workflow/Snakefile \
             -kj $THREADS \
