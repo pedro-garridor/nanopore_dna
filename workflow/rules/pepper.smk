@@ -26,7 +26,7 @@ rule pepper:
     resources:
         nvidia_gpu=1
     threads:
-        workflow.cores/4
+        workflow.cores/2
     singularity:
         'docker://kishwars/pepper_deepvariant:r0.8-gpu'
     shell:

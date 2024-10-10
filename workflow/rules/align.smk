@@ -18,6 +18,7 @@ rule fastq:
             {input} > {output}
         '''
 # -TMm,Ml,MM,ML
+# -T "*"
 
 rule minimap2:
     input:
@@ -26,7 +27,7 @@ rule minimap2:
     output:
         temp(config['outdir']+'/BAM/{sample}.sam')
     threads:
-        workflow.cores/4
+        workflow.cores
     conda:
         '../envs/minimap2.yml'
     shell:
