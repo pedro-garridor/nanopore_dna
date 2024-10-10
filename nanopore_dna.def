@@ -37,7 +37,7 @@ From: debian:11
 
     if [ "$#" -eq 0 ]; then
         echo "No arguments supplied."
-        echo "Use 'singularity run-help nanopore_dna.def' to get help."
+        echo "Use 'singularity run-help nanopore_dna.sif' to get help."
         exit 2
     fi
 
@@ -89,7 +89,7 @@ From: debian:11
 
     if [ -z $DBSNP ] || [ -z $PARENT_DIR ] || [ -z $OUT_DIR ] || [ -z $REF ]; then
         echo "Arguments -i, -o and -r are required."
-        echo "Use 'singularity run-help nanopore_dna.def' to get help."
+        echo "Use 'singularity run-help nanopore_dna.sif' to get help."
         exit 2
     fi
 
@@ -127,7 +127,7 @@ From: debian:11
     Version 0.0.1+20241008
 
 
-    Usage: singularity run nanopore_dna.def [arguments]
+    Usage: singularity run nanopore_dna.sif [arguments]
 
     Required:
         -i, --input FILE                        raw data folder
