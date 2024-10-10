@@ -2,7 +2,7 @@ Bootstrap: library
 From: debian:11
 
 %post
-    apt update && apt install -y bcftools minimap2 openjdk-17-jre python3 samtools snakemake tabix unzip wget
+    apt update && apt install -y python3 snakemake wget
     cd /opt
     wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
     mkdir /root/.conda
@@ -87,7 +87,7 @@ From: debian:11
         esac
     done
 
-    if [ -z $DBSNP ] || [ -z $PARENT_DIR ] || [ -z $OUT_DIR ] || [ -z $REF ]; then
+    if [ -z $INPUT ] || [ -z $OUTDIR ] || [ -z $REF ]; then
         echo "Arguments -i, -o and -r are required."
         echo "Use 'singularity run-help nanopore_dna.sif' to get help."
         exit 2
@@ -100,7 +100,8 @@ From: debian:11
             input=$INPUT \
             outdir=$OUTDIR \
             ref=$REF \
-            hg38=$HG38
+            hg38=$HG38 \
+            --singularity-args "-B $INPUT,$OUTDIR,$REF"
     else
         snakemake -s /opt/nanopore_dna/workflow/Snakefile \
             -kj $THREADS \
@@ -108,7 +109,8 @@ From: debian:11
             input=$INPUT \
             outdir=$OUTDIR \
             ref=$REF \
-            hg38=$HG38
+            hg38=$HG38 \
+            --singularity-args "-B $INPUT,$OUTDIR,$REF"
     fi
 
 %labels
