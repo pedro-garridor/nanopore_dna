@@ -28,7 +28,7 @@ rule pepper:
     threads:
         workflow.cores/2
     singularity:
-        'docker://kishwars/pepper_deepvariant:r0.8-gpu'
+        /opt/pepper_deepvariant_r0-8-gpu/ # 'docker://kishwars/pepper_deepvariant:r0.8-gpu'
     shell:
         '''
         run_pepper_margin_deepvariant \
