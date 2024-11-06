@@ -2,3 +2,4 @@
 .keras
 .parallel
 human_GRCh38_no_alt_analysis_set.trf.bed
+.pybiomart.sqlite

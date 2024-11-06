@@ -88,21 +88,25 @@ if [ -z $INPUT ] || [ -z $OUTDIR ] || [ -z $REF ]; then
 fi
 
 if [ $DRYRUN ]; then
-    snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+    snakemake -n \
         -kj $THREADS \
         --config \
         input=$INPUT \
         outdir=$OUTDIR \
         ref=$REF \
         hg38=$HG38 \
-        --singularity-args "-B $INPUT,$OUTDIR,$REF"
+        --use-conda \
+        --use-singularity \
+        --singularity-args "-B $INPUT,$OUTDIR,$(dirname $REF)"
 else
-    snakemake -s /opt/nanopore_dna/workflow/Snakefile \
+    snakemake \
         -kj $THREADS \
         --config \
         input=$INPUT \
         outdir=$OUTDIR \
         ref=$REF \
         hg38=$HG38 \
-        --singularity-args "-B $INPUT,$OUTDIR,$REF"
+        --use-conda \
+        --use-singularity \
+        --singularity-args "-B $INPUT,$OUTDIR,$(dirname $REF)"
 fi
