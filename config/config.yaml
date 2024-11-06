@@ -1,0 +1,5 @@
+input: '../input'
+outdir: 'results'
+ref: '../hg38/hg38.fa'
+hg38: 'no'
+vntr_bed: 'human_GRCh38_no_alt_analysis_set.trf.bed'

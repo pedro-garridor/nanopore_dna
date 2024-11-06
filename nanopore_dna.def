@@ -1,0 +1,147 @@
+Bootstrap: library
+From: debian:11
+
+%post
+    apt update && apt install -y python3 snakemake wget
+    cd /opt
+    wget https://github.com/sylabs/singularity/releases/download/v4.2.1/singularity-ce_4.2.1-focal_amd64.deb
+    apt install -y /opt/singularity-ce_4.2.1-focal_amd64.deb
+    rm /opt/singularity-ce_4.2.1-focal_amd64.deb
+    wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+    mkdir /root/.conda
+    bash Miniforge3-Linux-x86_64.sh -b -p /opt/miniforge3
+    rm Miniforge3-Linux-x86_64.sh
+    singularity build --sandbox ./pepper_deepvariant_r0-8-gpu/ docker://kishwars/pepper_deepvariant:r0.8-gpu
+
+%environment
+    PATH=$PATH:/opt/miniforge3/bin
+
+%files
+    ./config /opt/nanopore_dna/
+    ./resources /opt/nanopore_dna/
+    ./workflow /opt/nanopore_dna/
+    ./.gitattributes /opt/nanopore_dna/
+    ./.gitignore /opt/nanopore_dna/
+    ./LICENSE.md /opt/nanopore_dna/
+    ./README.md /opt/nanopore_dna/
+
+%runscript
+    VERSION='0.0.1+20241008'
+
+    echo ''
+    echo 'nanopore_dna: DNA-Seq nanopore pipeline'
+    echo 'Copyright (C) 2024, Pedro Garrido Rodríguez'
+    echo ''
+    echo 'This program is distributed in the hope that it will be useful,'
+    echo 'but WITHOUT ANY WARRANTY; without even the implied warranty of'
+    echo 'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.'
+    echo ''
+    echo "Version $VERSION"
+    echo ''
+
+    if [ "$#" -eq 0 ]; then
+        echo "No arguments supplied."
+        echo "Use 'singularity run-help nanopore_dna.sif' to get help."
+        exit 2
+    fi
+
+    while [ $# -gt 0 ]; do
+        case $1 in 
+            -i|--input)
+                INPUT="$2"
+                shift
+                shift
+                ;;
+            -o|--output)
+                OUTDIR="$2"
+                shift
+                shift
+                ;;
+            -r|--reference)
+                REF="$2"
+                shift
+                shift
+                ;;
+            -g|--hg38)
+                HG38="$2"
+                shift
+                shift
+                ;;
+            -n|--dryrun)
+                DRYRUN=1
+                shift
+                ;;
+            -t|--threads)
+                THREADS="$2"
+                shift
+                shift
+                ;;
+            -v|--version)
+                exit
+                shift
+                ;;
+            -*|--*)
+                echo "Unknown option $1"
+                exit 1
+                ;;
+            *)
+                echo "Unknown argument $1"
+                exit 1
+                ;;
+        esac
+    done
+
+    if [ -z $INPUT ] || [ -z $OUTDIR ] || [ -z $REF ]; then
+        echo "Arguments -i, -o and -r are required."
+        echo "Use 'singularity run-help nanopore_dna.sif' to get help."
+        exit 2
+    fi
+
+    if [ $DRYRUN ]; then
+        snakemake -s /opt/nanopore_dna/workflow/Snakefile -n \
+            -kj $THREADS \
+            --config \
+            input=$INPUT \
+            outdir=$OUTDIR \
+            ref=$REF \
+            hg38=$HG38 \
+            --singularity-args "-B $INPUT,$OUTDIR,$REF"
+    else
+        snakemake -s /opt/nanopore_dna/workflow/Snakefile \
+            -kj $THREADS \
+            --config \
+            input=$INPUT \
+            outdir=$OUTDIR \
+            ref=$REF \
+            hg38=$HG38 \
+            --singularity-args "-B $INPUT,$OUTDIR,$REF"
+    fi
+
+%labels
+    Author: Pedro Garrido Rodríguez
+    Contact: pedro (dot) garridor (at) outlook (dot) es
+    Version: 0.0.1+20241008
+
+%help
+
+    nanopore_dna: DNA-Seq nanopore pipeline
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    Version 0.0.1+20241008
+
+
+    Usage: singularity run nanopore_dna.sif [arguments]
+
+    Required:
+        -i, --input FILE                        raw data folder
+        -o, --output FILE                       output folder
+        -r , reference FILE                     reference genome
+    
+    Optional arguments:
+        -g, --hg38 [no]                         reference is hg38? [yes|no]
+        -t [1]                                  threads
+        -n                                      perform a dry run
+    
