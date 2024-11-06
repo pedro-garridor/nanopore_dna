@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION='0.0.1+20241030'
+VERSION='0.0.1+20241105'
 
 echo ''
 echo 'nanopore_dna: DNA-Seq nanopore pipeline'
