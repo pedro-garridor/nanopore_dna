@@ -33,11 +33,15 @@ Changing `<MINIFORGE_VERSION>` with the latest version available.
     
     cd nanopore_dna
     mamba env create -f nanopore_dna.yml
-    
 
 **NOTE**: this step assumes you have installed Miniforge and mamba, instead of conda. Please note if you are using conda, you may find inconsistencies when creating this env or during runtime.
+    
 
-**4.** Run the pipeline with
+**4.** Activate the environment:
+
+    mamba activate nanopore_dna
+
+**5.** Once you've done all of the above, you can run the pipeline with
 
     
     bash nanopore_dna.sh \

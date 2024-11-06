@@ -216,7 +216,7 @@ dependencies:
   - setuptools=75.3.0=pyhd8ed1ab_0
   - setuptools-scm=8.1.0=pyhd8ed1ab_0
   - shellingham=1.5.4=pyhd8ed1ab_0
-  - singularity=3.8.6=hf1ae047_0
+  - singularityce=3.9.5=hf1ae047_0
   - six=1.16.0=pyh6c4a22f_0
   - slacker=0.14.0=py_0
   - smart_open=7.0.5=pyhd8ed1ab_1
