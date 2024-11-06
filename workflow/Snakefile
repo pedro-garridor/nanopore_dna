@@ -16,6 +16,6 @@ SAMPLES = glob_wildcards(config['input']+'/{sample}.bam').sample
 
 rule all:
     input:
-        expand(config['outdir']+'/VCF/{sample}.vcf.gz.tbi', sample=SAMPLES),
+        expand(config['outdir']+'/PMDV/{sample}/{sample}_PMDV_FINAL.phased.vcf.gz', sample=SAMPLES),
         expand(config['outdir']+'/modkit/{sample}.bed', sample=SAMPLES),
         expand(config['outdir']+'/sniffles2/{sample}.vcf.gz.tbi', sample=SAMPLES)
