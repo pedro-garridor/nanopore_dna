@@ -46,7 +46,7 @@ Changing `<MINIFORGE_VERSION>` with the latest version available.
     
     bash nanopore_dna.sh \
         -i <INPUT_FOLDER> \
-        -o <OUTPUT_FOLDER>  
+        -o <OUTPUT_FOLDER> \
         -r <REFERENCE_GENOME> \
         -t <THREADS>
     
